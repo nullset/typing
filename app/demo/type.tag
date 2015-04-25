@@ -3,7 +3,7 @@
   <div>
     <div class="text">{ opts.text }</div>
     <div class="text">
-      <span each={letter, i in output} class="letter">{letter}</span><span class="cursor blink" style="display: inline-block; background: cyan;">&nbsp;</span>
+      <span each={output} class="letter"><span class="{this.status}">{this.string}</span></span><span class="cursor blink" style="display: inline-block; background: cyan;">&nbsp;</span>
     </div>
   </div>
 
@@ -18,26 +18,42 @@
     //   issue:
     // }
 
+    // TODO
+    // * handle spaces
+
     this.test = {
-      text: "A little goose walked across the road, sharing his meal with a fox."
+      text: "A little goose walked across the road, sharing his meal with a fox.",
+      isComplete: false
     }
-    this.test = opts.text.split('');
+    this.test.array = opts.text.split('');
 
     this.addCharacter = function(e) {
-      var character = String.fromCharCode(e.keyCode);
-      this.output.push(character);
-      this.update();
+      if (this.output.length < this.test.array.length) {
+        var character = String.fromCharCode(e.keyCode);
+        var compareCharacter = this.testCharacter(character, this.output.length);
+        this.output.push(_.merge({string: character}, compareCharacter));
+        this.update();
+      } else {
+        this.test.isComplete = true;
+        alert('test finished')
+      }
     }
 
     this.testCharacter = function(character, i) {
-
+      if (this.test.array[i] !== character) {
+        return {status: 'bad'}
+      } else {
+        return;
+      }
     }
 
     document.addEventListener('keydown', function(e) {
       if (e.which === 8) { // backspace
         e.preventDefault();
-        self.output.splice(-1);
-        self.update();
+        if (self.output.length > 0) {
+          self.output.splice(-1);
+          self.update();
+        }
       } else {
         return e;  // Pass event to next event listener
       }
