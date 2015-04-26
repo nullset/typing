@@ -21,7 +21,6 @@
 
     // TODO
     // * handle spaces
-    // * fix accuracy calculation (needs to count number of keypyresses as well as number of correct keypresses)
 
     this.test = {
       text: opts.text,
@@ -31,22 +30,13 @@
     }
 
     this.addCharacter = function(e) {
-      if (!this.test.isStarted) {
-        this.test.isStarted = (new Date()).getTime();
+      var character = String.fromCharCode(e.keyCode);
+      var compareCharacter = this.testCharacter(character, this.output.length);
+      if (e.keyCode === 32) {
+        character = ' ';  // Change a space to a non-breaking space
       }
-      if (this.output.length < this.test.array.length) {
-        var character = String.fromCharCode(e.keyCode);
-        var compareCharacter = this.testCharacter(character, this.output.length);
-        this.output.push(_.merge({string: character}, compareCharacter));
-        this.update();
-      }
-      if (this.output.length === this.test.array.length) {
-        this.test.isComplete = (new Date()).getTime();
-        this.calculateWpm();
-        this.calculateAccuracy();
-        this.update();
-        alert('test finished')
-      }
+      this.output.push(_.merge({string: character}, compareCharacter));
+      this.update();
     }
 
     this.testCharacter = function(character, i) {
@@ -80,7 +70,26 @@
         return e;  // Pass event to next event listener
       }
     })
-    document.addEventListener('keypress', this.addCharacter.bind(this));
+    // document.addEventListener('keypress', this.addCharacter.bind(this));
+
+    document.addEventListener('keypress', function(e) {
+      if (!self.test.isStarted) {
+        self.test.isStarted = (new Date()).getTime();
+      }
+      if (!self.test.isComplete) {
+        if (self.output.length < self.test.array.length) {
+          self.addCharacter(e);
+        }
+        if (self.output.length === self.test.array.length) {
+          self.test.isComplete = (new Date()).getTime();
+          self.calculateWpm();
+          self.calculateAccuracy();
+          self.update();
+          alert('test finished')
+        }
+      }
+
+    });
 
   </script>
 
