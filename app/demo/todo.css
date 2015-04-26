@@ -54,17 +54,26 @@ label {
 }
 
 
+.is-hidden {
+  display: none;
+}
 .blink {
   animation: blink 1s steps(5, start) infinite;
   -webkit-animation: blink 1s steps(5, start) infinite;
 }
 @keyframes blink {
-  to {
+  0% {
+    visibility: visible;
+  }
+  50% {
     visibility: hidden;
   }
 }
 @-webkit-keyframes blink {
-  to {
+  0% {
+    visibility: visible;
+  }
+  50% {
     visibility: hidden;
   }
 }
@@ -73,7 +82,8 @@ type .text {
   font-family: monospace;
 }
 type .cursor {
-  text-decoration: blink;
+  display: inline-block;
+  background: cyan;
 }
 type input {
   font-family: monospace;
